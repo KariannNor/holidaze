@@ -1,87 +1,82 @@
 // src/context/AuthContext.jsx
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser } from '../api/auth/login';
-import { registerUser } from '../api/auth/register';
-import { logoutUser } from '../api/auth/logout';
-import { getUser, getToken, isVenueManager } from '../utils/storage';
+import { getToken, saveToken, saveUser, getUser, clearStorage } from '../utils/storage';
+import { getProfile } from '../api/profile/getProfile';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isManager, setIsManager] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  // Check if user is already logged in on mount
+  const isManager = user?.venueManager || false;
+
+  // Initialize auth state
   useEffect(() => {
     const token = getToken();
-    const storedUser = getUser();
-
-    if (token && storedUser) {
-      setUser(storedUser);
+    const userData = getUser();
+    
+    if (token && userData) {
+      setUser(userData);
       setIsAuthenticated(true);
-      setIsManager(isVenueManager());
     }
-    setLoading(false);
   }, []);
 
-  /**
-   * Login function
-   */
-  const login = async (credentials) => {
-    const result = await loginUser(credentials);
+  // Add refreshUser function
+  const refreshUser = async () => {
+    const token = getToken();
+    const userData = getUser();
     
-    if (result.success) {
-      setUser(result.data);
-      setIsAuthenticated(true);
-      setIsManager(result.data.venueManager || false);
+    if (token && userData?.name) {
+      try {
+        const result = await getProfile(userData.name);
+        if (result.success) {
+          const updatedUser = result.data;
+          setUser(updatedUser);
+          saveUser(updatedUser);
+          console.log('User data refreshed:', updatedUser); // Debug log
+          return { success: true, data: updatedUser };
+        } else {
+          console.error('Failed to refresh user data:', result.error);
+          return { success: false, error: result.error };
+        }
+      } catch (error) {
+        console.error('Error refreshing user data:', error);
+        return { success: false, error: 'Network error occurred' };
+      }
     }
-    
-    return result;
+    return { success: false, error: 'No user data to refresh' };
   };
 
-  /**
-   * Register function
-   */
-  const register = async (userData) => {
-    const result = await registerUser(userData);
-    return result;
+  const login = (userData, token) => {
+    saveToken(token);
+    saveUser(userData);
+    setUser(userData);
+    setIsAuthenticated(true);
   };
 
-  /**
-   * Logout function
-   */
   const logout = () => {
-    const result = logoutUser();
-    
-    if (result.success) {
-      setUser(null);
-      setIsAuthenticated(false);
-      setIsManager(false);
-    }
-    
-    return result;
-  };
-
-  /**
-   * Update user data (e.g., after avatar update)
-   */
-  const updateUser = (updatedData) => {
-    const updatedUser = { ...user, ...updatedData };
-    setUser(updatedUser);
+    clearStorage();
+    setUser(null);
+    setIsAuthenticated(false);
   };
 
   const value = {
     user,
     isAuthenticated,
     isManager,
-    loading,
     login,
-    register,
     logout,
-    updateUser,
+    refreshUser, // Add refreshUser to context
   };
 
   return (
@@ -89,17 +84,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-/**
- * Custom hook to use auth context
- */
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  
-  return context;
 };

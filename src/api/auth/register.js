@@ -1,6 +1,6 @@
 // src/api/auth/register.js
 
-import { API_BASE_URL, API_ENDPOINTS, ERROR_MESSAGES } from "../constants";
+import { API_BASE_URL } from "../constants";
 
 /**
  * Register a new user
@@ -15,36 +15,32 @@ import { API_BASE_URL, API_ENDPOINTS, ERROR_MESSAGES } from "../constants";
  */
 export const registerUser = async (userData) => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}${API_ENDPOINTS.AUTH_REGISTER}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/holidaze/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Noroff-API-Key": process.env.REACT_APP_API_KEY,
+      },
+      body: JSON.stringify(userData),
+    });
 
-    const data = await response.json();
+    const result = await response.json();
 
     if (!response.ok) {
-      // Handle specific error messages from API
-      if (data.errors && data.errors.length > 0) {
-        throw new Error(data.errors[0].message);
-      }
-      throw new Error(ERROR_MESSAGES.REGISTRATION_FAILED);
+      return {
+        success: false,
+        error: result.errors?.[0]?.message || "Registration failed",
+      };
     }
 
     return {
       success: true,
-      data: data.data,
+      data: result.data,
     };
   } catch (error) {
-    console.error("Registration error:", error);
     return {
       success: false,
-      error: error.message || ERROR_MESSAGES.REGISTRATION_FAILED,
+      error: "Network error occurred during registration",
     };
   }
 };
@@ -57,19 +53,16 @@ export const registerUser = async (userData) => {
 export const validateRegistration = (userData) => {
   const errors = {};
 
-  // Validate name
-  if (!userData.name || userData.name.trim().length === 0) {
-    errors.name = "Name is required";
+  if (!userData.name || userData.name.length < 1) {
+    errors.name = "Username is required";
   }
 
-  // Validate email
-  if (!userData.email || userData.email.trim().length === 0) {
+  if (!userData.email) {
     errors.email = "Email is required";
-  } else if (!userData.email.endsWith("@stud.noroff.no")) {
-    errors.email = "Email must end with @stud.noroff.no";
+  } else if (!userData.email.includes("@stud.noroff.no")) {
+    errors.email = "Must be a @stud.noroff.no email address";
   }
 
-  // Validate password
   if (!userData.password || userData.password.length < 8) {
     errors.password = "Password must be at least 8 characters";
   }

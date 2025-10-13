@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { validateRegistration } from '../../api/auth/register';
+import { registerUser, validateRegistration } from '../../api/auth/register';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { login, refreshUser } = useAuth(); // Use login instead of register
   
   const [formData, setFormData] = useState({
     name: '',
@@ -62,13 +62,24 @@ const RegisterForm = () => {
     setIsLoading(true);
 
     try {
-      const result = await register(userData);
+      // Use registerUser API function instead of register from context
+      const result = await registerUser(userData);
       
       if (result.success) {
-        // Redirect to login page after successful registration
-        navigate('/login', { 
-          state: { message: 'Registration successful! Please log in.' }
-        });
+        // If registration includes login data, log the user in automatically
+        if (result.data?.accessToken && result.data?.user) {
+          login(result.data.user, result.data.accessToken);
+          // Refresh user data to ensure we have the latest venueManager status
+          if (refreshUser) {
+            await refreshUser();
+          }
+          navigate('/profile');
+        } else {
+          // Otherwise redirect to login page
+          navigate('/login', { 
+            state: { message: 'Registration successful! Please log in.' }
+          });
+        }
       } else {
         setApiError(result.error);
       }

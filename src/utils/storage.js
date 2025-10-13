@@ -100,6 +100,7 @@ export const getAuthHeaders = () => {
   const token = getToken();
   const headers = {
     "Content-Type": "application/json",
+    "X-Noroff-API-Key": "ad863995-4afc-421b-9109-56d0a0ef4ff9",
   };
 
   if (token) {

@@ -66,7 +66,7 @@ const VenueDetailsPage = () => {
 
   const images = venue.media && venue.media.length > 0 
     ? venue.media 
-    : [{ url: 'https://via.placeholder.com/800x600?text=No+Image', alt: venue.name }];
+    : [{ url: 'https://placehold.co/800x600?text=No+Image', alt: venue.name }];
 
   return (
     <Layout>
