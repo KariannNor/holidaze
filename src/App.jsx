@@ -1,16 +1,10 @@
-// src/App.js
+// src/App.jsx
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-
-// Placeholder Home component (we'll build this next)
-const Home = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <h1 className="text-4xl font-bold">Home Page - Coming Soon</h1>
-  </div>
-);
 
 function App() {
   return (
