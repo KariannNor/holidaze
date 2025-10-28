@@ -1,6 +1,4 @@
-// src/context/AuthContext.jsx
-
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { getToken, saveToken, saveUser, getUser, clearStorage } from '../utils/storage';
 import { getProfile } from '../api/profile/getProfile';
 
@@ -20,19 +18,33 @@ export const AuthProvider = ({ children }) => {
 
   const isManager = user?.venueManager || false;
 
+  // Throttle refreshes to avoid rapid repeated API calls
+  const lastRefreshRef = useRef(0);
+  const REFRESH_THROTTLE_MS = 3000; // increased to 3s
+
   // Initialize auth state
   useEffect(() => {
     const token = getToken();
     const userData = getUser();
     
-    if (token && userData) {
+    if (token && userData && typeof userData === 'object') {
       setUser(userData);
       setIsAuthenticated(true);
+    } else {
+      clearStorage();
+      setUser(null);
+      setIsAuthenticated(false);
     }
   }, []);
 
   // Add refreshUser function
   const refreshUser = async () => {
+    const now = Date.now();
+    if (now - lastRefreshRef.current < REFRESH_THROTTLE_MS) {
+      return { success: false, error: 'Throttled' };
+    }
+    lastRefreshRef.current = now;
+
     const token = getToken();
     const userData = getUser();
     
@@ -43,14 +55,11 @@ export const AuthProvider = ({ children }) => {
           const updatedUser = result.data;
           setUser(updatedUser);
           saveUser(updatedUser);
-          console.log('User data refreshed:', updatedUser); // Debug log
           return { success: true, data: updatedUser };
         } else {
-          console.error('Failed to refresh user data:', result.error);
           return { success: false, error: result.error };
         }
       } catch (error) {
-        console.error('Error refreshing user data:', error);
         return { success: false, error: 'Network error occurred' };
       }
     }
@@ -58,10 +67,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (userData, token) => {
-    saveToken(token);
-    saveUser(userData);
-    setUser(userData);
-    setIsAuthenticated(true);
+    if (userData && token) {
+      saveToken(token);
+      saveUser(userData);
+      setUser(userData);
+      setIsAuthenticated(true);
+    }
   };
 
   const logout = () => {
@@ -76,7 +87,7 @@ export const AuthProvider = ({ children }) => {
     isManager,
     login,
     logout,
-    refreshUser, // Add refreshUser to context
+    refreshUser,
   };
 
   return (

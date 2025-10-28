@@ -52,7 +52,6 @@ export const updateAvatar = async (name, avatarData) => {
       message: SUCCESS_MESSAGES.PROFILE_UPDATED,
     };
   } catch (error) {
-    console.error("Error updating avatar:", error);
     return {
       success: false,
       error: error.message || ERROR_MESSAGES.GENERIC_ERROR,

@@ -52,7 +52,7 @@ export const ERROR_MESSAGES = {
   VENUE_NOT_FOUND: "Venue not found.",
   BOOKING_FAILED: "Failed to create booking. Please try again.",
   UNAUTHORIZED: "You are not authorized to perform this action.",
-  GENERIC_ERROR: "Something went wrong. Please try again.",
+  GENERIC_ERROR: "An error occurred",
 };
 
 // Success Messages

@@ -10,6 +10,7 @@ import { API_BASE_URL, API_ENDPOINTS, ERROR_MESSAGES } from "../constants";
  * @param {boolean} [options.includeBookings] - Include bookings
  * @returns {Promise<Object>} - Venue data
  */
+
 export const getVenueById = async (id, options = {}) => {
   try {
     // Build query string
@@ -46,7 +47,6 @@ export const getVenueById = async (id, options = {}) => {
       data: result.data,
     };
   } catch (error) {
-    console.error("Error fetching venue:", error);
     return {
       success: false,
       error: error.message || ERROR_MESSAGES.GENERIC_ERROR,

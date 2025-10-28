@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getProfileBookings } from '../api/profile/getProfile';
@@ -14,6 +14,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('upcoming');
+
+  // Prevent duplicate initial refreshes (helps with StrictMode double-mount)
+  const initRef = useRef(false);
 
   const fetchBookings = useCallback(async () => {
     if (!user?.name) return;
@@ -44,18 +47,16 @@ const Profile = () => {
   // Add effect to refresh user data when page gains focus
   useEffect(() => {
     const handleFocus = () => {
-      if (refreshUser) {
-        refreshUser();
-      }
+      if (refreshUser) refreshUser();
     };
 
-    window.addEventListener('focus', handleFocus);
-    
-    // Also refresh when component mounts
-    if (refreshUser) {
-      refreshUser();
+    // Only run initial refresh once
+    if (!initRef.current) {
+      initRef.current = true;
+      if (refreshUser) refreshUser();
     }
 
+    window.addEventListener('focus', handleFocus);
     return () => {
       window.removeEventListener('focus', handleFocus);
     };

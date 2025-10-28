@@ -38,7 +38,6 @@ export const createVenue = async (venueData) => {
       message: SUCCESS_MESSAGES.VENUE_CREATED,
     };
   } catch (error) {
-    console.error("Error creating venue:", error);
     return {
       success: false,
       error: error.message || ERROR_MESSAGES.GENERIC_ERROR,

@@ -1,124 +1,109 @@
 // src/api/profile/getProfile.js
 
-import { API_BASE_URL, API_ENDPOINTS, ERROR_MESSAGES } from "../constants";
+import { API_BASE_URL, API_ENDPOINTS } from "../constants";
 import { getAuthHeaders } from "../../utils/storage";
 
 /**
  * Get user profile by name
- * @param {string} name - Username
- * @param {Object} options - Query options
- * @param {boolean} [options.includeBookings] - Include user bookings
- * @param {boolean} [options.includeVenues] - Include user venues (for managers)
- * @returns {Promise<Object>} - Profile data
+ * @param {string} username - Username
+ * @returns {Promise<Object>} - { success: boolean, data?, error? }
  */
-export const getProfile = async (name, options = {}) => {
+export const getProfile = async (username) => {
+  if (!API_BASE_URL || !API_ENDPOINTS?.PROFILE_BY_NAME) {
+    return { success: false, error: "API configuration error" };
+  }
+
   try {
-    const queryParams = new URLSearchParams();
-
-    if (options.includeBookings) queryParams.append("_bookings", "true");
-    if (options.includeVenues) queryParams.append("_venues", "true");
-
-    const queryString = queryParams.toString();
-    const url = `${API_BASE_URL}${API_ENDPOINTS.PROFILE_BY_NAME(name)}${
-      queryString ? `?${queryString}` : ""
-    }`;
-
-    const response = await fetch(url, {
+    const url = `${API_BASE_URL}${API_ENDPOINTS.PROFILE_BY_NAME(username)}`;
+    const res = await fetch(url, {
       method: "GET",
       headers: getAuthHeaders(),
     });
 
-    const result = await response.json();
+    const data = await res.json();
 
-    if (!response.ok) {
-      throw new Error(
-        result.errors?.[0]?.message || ERROR_MESSAGES.GENERIC_ERROR
-      );
+    if (!res.ok) {
+      return {
+        success: false,
+        error:
+          data.errors?.[0]?.message ||
+          data.message ||
+          "Failed to fetch profile",
+      };
     }
 
-    return {
-      success: true,
-      data: result.data,
-    };
+    return { success: true, data: data.data || data };
   } catch (error) {
-    console.error("Error fetching profile:", error);
-    return {
-      success: false,
-      error: error.message || ERROR_MESSAGES.GENERIC_ERROR,
-    };
+    return { success: false, error: "Network error" };
   }
 };
 
 /**
  * Get user bookings
  * @param {string} name - Username
- * @returns {Promise<Object>} - Bookings data
+ * @returns {Promise<Object>}
  */
 export const getProfileBookings = async (name) => {
+  if (!API_BASE_URL || !API_ENDPOINTS?.PROFILE_BOOKINGS) {
+    return { success: false, error: "API configuration error" };
+  }
+
   try {
     const url = `${API_BASE_URL}${API_ENDPOINTS.PROFILE_BOOKINGS(
       name
     )}?_venue=true`;
-
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       method: "GET",
       headers: getAuthHeaders(),
     });
 
-    const result = await response.json();
+    const data = await res.json();
 
-    if (!response.ok) {
-      throw new Error(
-        result.errors?.[0]?.message || ERROR_MESSAGES.GENERIC_ERROR
-      );
+    if (!res.ok) {
+      return {
+        success: false,
+        error:
+          data.errors?.[0]?.message ||
+          data.message ||
+          "Failed to fetch bookings",
+      };
     }
 
-    return {
-      success: true,
-      data: result.data,
-    };
+    return { success: true, data: data.data || data };
   } catch (error) {
-    console.error("Error fetching bookings:", error);
-    return {
-      success: false,
-      error: error.message || ERROR_MESSAGES.GENERIC_ERROR,
-    };
+    return { success: false, error: "Network error" };
   }
 };
 
 /**
  * Get user venues (for venue managers)
  * @param {string} name - Username
- * @returns {Promise<Object>} - Venues data
+ * @returns {Promise<Object>}
  */
 export const getProfileVenues = async (name) => {
-  try {
-    const url = `${API_BASE_URL}${API_ENDPOINTS.PROFILE_VENUES(
-      name
-    )}?_bookings=true`;
+  if (!API_BASE_URL || !API_ENDPOINTS?.PROFILE_VENUES) {
+    return { success: false, error: "API configuration error" };
+  }
 
-    const response = await fetch(url, {
+  try {
+    const url = `${API_BASE_URL}${API_ENDPOINTS.PROFILE_VENUES(name)}`;
+    const res = await fetch(url, {
       method: "GET",
       headers: getAuthHeaders(),
     });
 
-    const result = await response.json();
+    const data = await res.json();
 
-    if (!response.ok) {
-      throw new Error(
-        result.errors?.[0]?.message || ERROR_MESSAGES.GENERIC_ERROR
-      );
+    if (!res.ok) {
+      return {
+        success: false,
+        error:
+          data.errors?.[0]?.message || data.message || "Failed to fetch venues",
+      };
     }
 
-    return {
-      success: true,
-      data: result.data,
-    };
+    return { success: true, data: data.data || data };
   } catch (error) {
-    console.error("Error fetching venues:", error);
-    return {
-      success: false,
-      error: error.message || ERROR_MESSAGES.GENERIC_ERROR,
-    };
+    return { success: false, error: "Network error" };
   }
 };

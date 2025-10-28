@@ -9,7 +9,8 @@ export const saveToStorage = (key, value) => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.error("Error saving to localStorage:", error);
+    // Ignore storage write failures to avoid throwing in environments
+    // where localStorage is unavailable or restricted
   }
 };
 
@@ -19,9 +20,12 @@ export const saveToStorage = (key, value) => {
 export const getFromStorage = (key) => {
   try {
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : null;
+    // Check if item exists and is not null/undefined
+    if (item === null || item === undefined || item === "undefined") {
+      return null;
+    }
+    return JSON.parse(item);
   } catch (error) {
-    console.error("Error reading from localStorage:", error);
     return null;
   }
 };
@@ -32,8 +36,11 @@ export const getFromStorage = (key) => {
 export const removeFromStorage = (key) => {
   try {
     localStorage.removeItem(key);
+    return true;
   } catch (error) {
-    console.error("Error removing from localStorage:", error);
+    // Ignore storage removal failures in restricted environments.
+    // Return false to indicate the removal did not succeed.
+    return false;
   }
 };
 
@@ -41,13 +48,8 @@ export const removeFromStorage = (key) => {
  * Clear all app data from localStorage
  */
 export const clearStorage = () => {
-  try {
-    Object.values(STORAGE_KEYS).forEach((key) => {
-      localStorage.removeItem(key);
-    });
-  } catch (error) {
-    console.error("Error clearing localStorage:", error);
-  }
+  removeFromStorage(STORAGE_KEYS.TOKEN);
+  removeFromStorage(STORAGE_KEYS.USER);
 };
 
 /**
@@ -61,7 +63,7 @@ export const getToken = () => {
  * Save authentication token
  */
 export const saveToken = (token) => {
-  saveToStorage(STORAGE_KEYS.TOKEN, token);
+  return saveToStorage(STORAGE_KEYS.TOKEN, token);
 };
 
 /**
@@ -75,14 +77,16 @@ export const getUser = () => {
  * Save user data
  */
 export const saveUser = (user) => {
-  saveToStorage(STORAGE_KEYS.USER, user);
+  return saveToStorage(STORAGE_KEYS.USER, user);
 };
 
 /**
  * Check if user is authenticated
  */
 export const isAuthenticated = () => {
-  return !!getToken();
+  const token = getToken();
+  const user = getUser();
+  return !!(token && user);
 };
 
 /**
@@ -90,7 +94,7 @@ export const isAuthenticated = () => {
  */
 export const isVenueManager = () => {
   const user = getUser();
-  return user?.venueManager === true;
+  return user?.venueManager || false;
 };
 
 /**
@@ -100,7 +104,7 @@ export const getAuthHeaders = () => {
   const token = getToken();
   const headers = {
     "Content-Type": "application/json",
-    "X-Noroff-API-Key": "ad863995-4afc-421b-9109-56d0a0ef4ff9",
+    "X-Noroff-API-Key": process.env.REACT_APP_API_KEY,
   };
 
   if (token) {

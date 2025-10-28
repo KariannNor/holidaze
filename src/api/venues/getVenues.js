@@ -49,7 +49,6 @@ export const getVenues = async (options = {}) => {
       meta: result.meta,
     };
   } catch (error) {
-    console.error("Error fetching venues:", error);
     return {
       success: false,
       error: error.message || ERROR_MESSAGES.GENERIC_ERROR,
@@ -88,7 +87,6 @@ export const searchVenues = async (query) => {
       data: result.data,
     };
   } catch (error) {
-    console.error("Error searching venues:", error);
     return {
       success: false,
       error: error.message || ERROR_MESSAGES.GENERIC_ERROR,

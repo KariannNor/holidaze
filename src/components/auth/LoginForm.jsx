@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { validateLogin } from '../../api/auth/login';
+import { loginUser, validateLogin } from '../../api/auth/login';
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = useAuth(); // This is for updating context, not making API calls
   
   const [formData, setFormData] = useState({
     email: '',
@@ -45,9 +45,12 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
-      const result = await login(formData);
+      // Use loginUser API function instead of context login
+      const result = await loginUser(formData);
       
       if (result.success) {
+        // Update auth context with user data and token
+        login(result.data, result.data.accessToken);
         // Redirect to home page after successful login
         navigate('/');
       } else {

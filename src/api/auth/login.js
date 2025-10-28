@@ -1,78 +1,20 @@
 // src/api/auth/login.js
 
-import { API_BASE_URL, API_ENDPOINTS, ERROR_MESSAGES } from "../constants";
-import { saveToken, saveUser } from "../../utils/storage";
+import { API_BASE_URL, API_ENDPOINTS } from "../constants";
 
 /**
- * Login user
- * @param {Object} credentials - User login credentials
- * @param {string} credentials.email - User email
- * @param {string} credentials.password - User password
- * @returns {Promise<Object>} - Login response with user data and token
+ * Validate login data
  */
-export const loginUser = async (credentials) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH_LOGIN}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      // Handle specific error messages from API
-      if (data.errors && data.errors.length > 0) {
-        throw new Error(data.errors[0].message);
-      }
-      throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
-    }
-
-    // Save token and user data to localStorage
-    if (data.data.accessToken) {
-      saveToken(data.data.accessToken);
-    }
-
-    if (data.data) {
-      saveUser({
-        name: data.data.name,
-        email: data.data.email,
-        avatar: data.data.avatar,
-        venueManager: data.data.venueManager,
-        bio: data.data.bio,
-      });
-    }
-
-    return {
-      success: true,
-      data: data.data,
-    };
-  } catch (error) {
-    console.error("Login error:", error);
-    return {
-      success: false,
-      error: error.message || ERROR_MESSAGES.INVALID_CREDENTIALS,
-    };
-  }
-};
-
-/**
- * Validate login credentials before sending to API
- * @param {Object} credentials - Login credentials
- * @returns {Object} - Validation result with errors if any
- */
-export const validateLogin = (credentials) => {
+export const validateLogin = (userData) => {
   const errors = {};
 
-  // Validate email
-  if (!credentials.email || credentials.email.trim().length === 0) {
+  if (!userData.email) {
     errors.email = "Email is required";
+  } else if (!userData.email.endsWith("@stud.noroff.no")) {
+    errors.email = "Must be a @stud.noroff.no email address";
   }
 
-  // Validate password
-  if (!credentials.password || credentials.password.length === 0) {
+  if (!userData.password) {
     errors.password = "Password is required";
   }
 
@@ -80,4 +22,39 @@ export const validateLogin = (credentials) => {
     isValid: Object.keys(errors).length === 0,
     errors,
   };
+};
+
+/**
+ * Login user
+ */
+export const loginUser = async (userData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH_LOGIN}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Noroff-API-Key": process.env.REACT_APP_API_KEY,
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: result.errors?.[0]?.message || result.message || "Login failed",
+      };
+    }
+
+    return {
+      success: true,
+      data: result.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Network error occurred during login",
+    };
+  }
 };
