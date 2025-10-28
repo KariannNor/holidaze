@@ -7,7 +7,7 @@ import { getProfileVenues } from '../api/profile/getProfile';
 import { deleteVenue } from '../api/venues/deleteVenue';
 import VenueForm from '../components/venues/VenueForm';
 import Loading from '../components/common/Loading';
-import Layout from '../components/layout/Layout';
+import Layout from '../components/layout/layout';
 
 const ManageVenues = () => {
   const { user, isAuthenticated, isManager } = useAuth();

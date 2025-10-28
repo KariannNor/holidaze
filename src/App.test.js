@@ -1,9 +1,8 @@
-import { render, screen } from "@testing-library/react";
-import App from "./App";
+import { render, screen } from '@testing-library/react';
+import App from './App';
 
-test("renders main heading", () => {
+test('renders learn react link', () => {
   render(<App />);
-  // The application header displays the app name
-  const headings = screen.getAllByText(/holidaze/i);
-  expect(headings.length).toBeGreaterThan(0);
+  const linkElement = screen.getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
 });

@@ -5,7 +5,7 @@ import { getVenues, searchVenues } from '../api/venues/getVenues';
 import VenueCard from '../components/venues/VenueCard';
 import SearchBar from '../components/common/SearchBar';
 import Loading from '../components/common/Loading';
-import Layout from '../components/layout/Layout';
+import Layout from '../components/layout/layout';
 
 const Home = () => {
   const [venues, setVenues] = useState([]);

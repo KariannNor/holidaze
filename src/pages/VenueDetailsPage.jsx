@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getVenueById } from '../api/venues/getVenueById';
 import BookingForm from '../components/bookings/BookingForm';
 import Loading from '../components/common/Loading';
-import Layout from '../components/layout/Layout';
+import Layout from '../components/layout/layout';
 
 const VenueDetailsPage = () => {
   const { id } = useParams();

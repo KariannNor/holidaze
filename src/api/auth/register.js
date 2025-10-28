@@ -48,6 +48,9 @@ export const registerUser = async (userData) => {
     const result = await response.json();
 
     if (!response.ok) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("Registration error response:", result);
+      }
       return {
         success: false,
         error:
@@ -62,6 +65,9 @@ export const registerUser = async (userData) => {
       data: result.data,
     };
   } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("Registration network error:", error);
+    }
     return {
       success: false,
       error: "Network error occurred during registration",

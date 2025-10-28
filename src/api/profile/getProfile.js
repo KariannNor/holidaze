@@ -10,6 +10,7 @@ import { getAuthHeaders } from "../../utils/storage";
  */
 export const getProfile = async (username) => {
   if (!API_BASE_URL || !API_ENDPOINTS?.PROFILE_BY_NAME) {
+    console.error("Missing API_BASE_URL or API_ENDPOINTS.PROFILE_BY_NAME");
     return { success: false, error: "API configuration error" };
   }
 
@@ -34,6 +35,7 @@ export const getProfile = async (username) => {
 
     return { success: true, data: data.data || data };
   } catch (error) {
+    console.error("Network error fetching profile:", error);
     return { success: false, error: "Network error" };
   }
 };
@@ -45,6 +47,7 @@ export const getProfile = async (username) => {
  */
 export const getProfileBookings = async (name) => {
   if (!API_BASE_URL || !API_ENDPOINTS?.PROFILE_BOOKINGS) {
+    console.error("Missing API_BASE_URL or API_ENDPOINTS.PROFILE_BOOKINGS");
     return { success: false, error: "API configuration error" };
   }
 
@@ -71,6 +74,7 @@ export const getProfileBookings = async (name) => {
 
     return { success: true, data: data.data || data };
   } catch (error) {
+    console.error("Network error fetching bookings:", error);
     return { success: false, error: "Network error" };
   }
 };
@@ -82,6 +86,7 @@ export const getProfileBookings = async (name) => {
  */
 export const getProfileVenues = async (name) => {
   if (!API_BASE_URL || !API_ENDPOINTS?.PROFILE_VENUES) {
+    console.error("Missing API_BASE_URL or API_ENDPOINTS.PROFILE_VENUES");
     return { success: false, error: "API configuration error" };
   }
 
@@ -104,6 +109,7 @@ export const getProfileVenues = async (name) => {
 
     return { success: true, data: data.data || data };
   } catch (error) {
+    console.error("Network error fetching venues:", error);
     return { success: false, error: "Network error" };
   }
 };

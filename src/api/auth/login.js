@@ -41,6 +41,9 @@ export const loginUser = async (userData) => {
     const result = await response.json();
 
     if (!response.ok) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("Login error response:", result);
+      }
       return {
         success: false,
         error: result.errors?.[0]?.message || result.message || "Login failed",
@@ -52,6 +55,9 @@ export const loginUser = async (userData) => {
       data: result.data,
     };
   } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("Login network error:", error);
+    }
     return {
       success: false,
       error: "Network error occurred during login",

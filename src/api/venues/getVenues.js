@@ -87,6 +87,7 @@ export const searchVenues = async (query) => {
       data: result.data,
     };
   } catch (error) {
+    console.error("Error searching venues:", error);
     return {
       success: false,
       error: error.message || ERROR_MESSAGES.GENERIC_ERROR,

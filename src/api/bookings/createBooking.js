@@ -36,6 +36,7 @@ export const createBooking = async (bookingData) => {
       data: result.data,
     };
   } catch (error) {
+    console.error("Error creating booking:", error);
     return {
       success: false,
       error: error.message || ERROR_MESSAGES.BOOKING_FAILED,

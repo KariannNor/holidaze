@@ -5,7 +5,7 @@ import { getProfileBookings } from '../api/profile/getProfile';
 import BookingCard from '../components/bookings/BookingCard';
 import AvatarUpdate from '../components/profile/AvatarUpdate';
 import Loading from '../components/common/Loading';
-import Layout from '../components/layout/Layout';
+import Layout from '../components/layout/layout';
 
 const Profile = () => {
   const { user, isAuthenticated, isManager, refreshUser } = useAuth();
