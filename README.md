@@ -2,6 +2,8 @@
 
 A modern accommodation booking platform built with React, allowing users to browse and book venues, and venue managers to list and manage their properties.
 
+🔗 **[Live Demo](https://holidaze1125.netlify.app/)**
+
 ## Description
 
 Holidaze is a comprehensive booking application that connects travelers with accommodation providers. The platform offers two user experiences:
