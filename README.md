@@ -1,53 +1,177 @@
-# Getting Started with Create React App
+# Holidaze - Venue Booking Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern accommodation booking platform built with React, allowing users to browse and book venues, and venue managers to list and manage their properties.
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+Holidaze is a comprehensive booking application that connects travelers with accommodation providers. The platform offers two user experiences:
 
-### `npm start`
+**For Customers:**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Browse and search through available venues
+- View detailed venue information including amenities, location, and availability
+- Create and manage bookings
+- Update profile avatar
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**For Venue Managers:**
 
-### `npm test`
+- Create and list venues with detailed descriptions and images
+- Manage venue details and pricing
+- View and track bookings for their properties
+- Update venue information and availability
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Built With
 
-### `npm run build`
+- [React](https://reactjs.org/) - UI Framework
+- [React Router](https://reactrouter.com/) - Navigation and routing
+- [Tailwind CSS](https://tailwindcss.com/) - Styling framework
+- [Noroff API v2](https://docs.noroff.dev/docs/v2) - Backend API
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Getting Started
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installing
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clone the repository:
 
-### `npm run eject`
+```bash
+git clone https://github.com/KariannNor/holidaze.git
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Navigate to the project directory:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+cd holidaze
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Install dependencies:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm install
+```
 
-## Learn More
+4. Create a `.env` file in the root directory and add your API key:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+REACT_APP_API_KEY=your_api_key_here
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Running
 
-### Code Splitting
+To run the development server:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm start
+```
+
+The application will open at [http://localhost:3000](http://localhost:3000)
+
+To build for production:
+
+```bash
+npm run build
+```
+
+## Features Implemented
+
+### User Stories Completed
+
+✅ **Public Features:**
+
+- View list of all venues
+- Search for specific venues by name or location
+- View detailed venue page with images, amenities, and location
+- View available dates for booking (via booking form)
+
+✅ **Customer Features:**
+
+- Register with @stud.noroff.no email
+- Login/logout functionality
+- Create bookings at venues
+- View upcoming and past bookings
+- Update profile avatar
+
+✅ **Venue Manager Features:**
+
+- Register as venue manager
+- Create new venues with details, images, and amenities
+- Update existing venues
+- Delete managed venues
+- View all bookings for managed venues
+
+### Technical Implementation
+
+**Best Practices:**
+
+- Clean, modular JavaScript code following React best practices
+- Reusable components with proper prop validation
+- Error-free code with comprehensive error handling
+- Formatted with consistent code style
+- Semantic HTML structure
+- Accessible form inputs with proper labels and validation
+- WCAG compliant color palette
+- Responsive design for all screen sizes
+
+**User Experience:**
+
+- User-friendly error messages and feedback
+- Form validation with helpful error messages
+- Loading states for async operations
+- Success confirmations for user actions
+- Intuitive navigation with clear call-to-actions
+- Accessible UI components
+
+**Design:**
+
+- Modern, clean interface appealing to travelers
+- Consistent color scheme with blue primary color (#2563eb)
+- Responsive grid layouts adapting to all devices
+- Clear visual hierarchy and spacing
+- Professional typography and imagery
+
+## Project Structure
+
+```
+src/
+├── api/              # API integration and constants
+│   ├── auth/         # Authentication endpoints
+│   ├── bookings/     # Booking endpoints
+│   ├── profile/      # Profile endpoints
+│   └── venues/       # Venue endpoints
+├── components/       # Reusable React components
+│   ├── auth/         # Login and registration forms
+│   ├── bookings/     # Booking components
+│   ├── common/       # Shared components (Loading, SearchBar)
+│   ├── layout/       # Layout components (Header, Footer)
+│   ├── profile/      # Profile components
+│   └── venues/       # Venue components
+├── context/          # React context (AuthContext)
+├── pages/            # Page components
+├── utils/            # Utility functions (storage helpers)
+└── App.jsx           # Main application component
+```
+
+## API Integration
+
+The application integrates with the [Noroff API v2](https://docs.noroff.dev/docs/v2/holidaze/venues) for:
+
+- User authentication and registration
+- Venue CRUD operations
+- Booking management
+- Profile management
+
+## Contact
+
+[Kariann Norheim](https://github.com/KariannNor)
+
+## Acknowledgments
+
+- [Noroff School of Technology and Digital Media](https://www.noroff.no/) for project requirements
+- [Noroff API Documentation](https://docs.noroff.dev/) for API reference
+- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
+
+---
+
+**Note:** This project was created as part of the Project Exam 2 for the Noroff Front-End Development course.
 
 ### Analyzing the Bundle Size
 
